@@ -1,18 +1,34 @@
 # XOR Starter
 ###### Solved by @joseeduardo-get
-> This is a CTF about decoding techniques, bitwise developer tools
-## About the Challenge
-No enunciado da questão é introduzido o funcionamento do método bitwise, a tarefa atribuída a quem esta resolvendo a questão é utilizar do método XOR entre a string "label" e o inteiro 13, apos isso converter novamente para texto.
-## Solution
-Primeiramente devemos converter a string em valores da tabela ASCII, para isso em Python vamos inicialmente atribuir o string a uma variável depois faremos uma estrutura de repetição, que utiliza o comando "ord()" para converter digito por digito, depois iremos imprimir os valores equivalentes ao texto.
 
->>> text = "label"
->>> ascii_list = [ord(char) for char in text]
->>> print (ascii_list)
+> Desafio de CTF envolvendo técnicas de decodificação e operações bitwise.
+
+## Sobre o Desafio
+
+O enunciado da questão apresenta brevemente o funcionamento da operação bitwise XOR. A tarefa é aplicar a operação XOR entre cada caractere da string `"label"` e o número inteiro `13`, e então reconstruir o texto original a partir dos valores resultantes.
+
+## Solução
+
+### Passo 1: Converter a string para ASCII
+
+Primeiramente, vamos converter cada caractere da string `"label"` para seus respectivos valores na tabela ASCII. Em Python, isso pode ser feito utilizando a função `ord()`:
+
+```python
+text = "label"
+ascii_list = [ord(char) for char in text]
+print(ascii_list)
+```
+Saída de dados:
+
+```python
 [108, 97, 98, 101, 108]
+```
 
-Depois disso devemos converter os valores para binario, em seguida fazer o XOR entre os valores depois coverter os resultados para ASCII e por fim para texto. No caso todas as etapas serão executadas pelo seguinte código em python
+### Passo 2: Aplicar a operação XOR
 
+Agora, com os valores ASCII em mãos, aplicamos a operação XOR (^) com o valor 13. Em seguida, convertemos o resultado novamente para caracteres com chr() e reconstruímos a string:
+
+```python
 numeros = [108, 97, 98, 101, 108]
 chave = 13
 texto = ""
@@ -25,7 +41,18 @@ for n in numeros:
     print(f"{n} ^ {chave} = {resultado} (bin: {bin(resultado)}) -> ASCII: '{caractere}'")
 
 print("\nTexto final reconstruído:", texto)
+```
 
-Na saída teremos a string "aloha".
+Saída de dados:
 
->`crypto{aloha}
+```python
+108 ^ 13 = 97 (bin: 0b1100001) -> ASCII: 'a'
+97 ^ 13 = 108 (bin: 0b1101100) -> ASCII: 'l'
+98 ^ 13 = 111 (bin: 0b1101111) -> ASCII: 'o'
+101 ^ 13 = 104 (bin: 0b1101000) -> ASCII: 'h'
+108 ^ 13 = 97 (bin: 0b1100001) -> ASCII: 'a'
+```
+
+Texto final reconstruído: aloha
+
+>crypto{aloha}
