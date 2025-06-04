@@ -48,15 +48,14 @@ key3 = xor_bytes(key2, key2_xor_key3)
 ```
  A terceira recuperação é a da ***flag*** pela qual através da propriedade associativa e da propriedade da auto-inversão obtemos identidades três vezes que geram a ***flag***.
 
+```python
 flag = xor_bytes(encrypted, key1, key2, key3)
- 
-print(flag.decode())
-
+ ```
 
 Saída de dados:
 
 ```python
-
+print(flag.decode())
 ```
 
 
