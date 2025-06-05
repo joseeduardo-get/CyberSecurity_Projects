@@ -14,49 +14,27 @@ Primeiramente, em python, utilizamos a função `bytes.fromhex()` para transform
 
 
 ```python
-def xor_bytes(*args):
-     from functools import reduce
-     return bytes([reduce(lambda x, y: x ^ y, values) for values in zip(*args)])
+hex_string = "73626960647f6b206821204f21254f7d694f7624662065622127234f726927756d"
+cipher_bytes = bytes.fromhex(hex_string)
 ```
-### Passo 2: Inserção de dados e conversão para bytes
+### Passo 2: Descobrir com qual byte foi feita a operação XOR
 
-Agora, vamos inserir os dados e com o operador `"bytes.fromhex()"` fazemos a conversão de hexadecimal para bytes.
+Agora, sabendo que a chave tem apenas um byte (valores entre 0 e 255) com o comando `range(256)`, devemos aplicar a operação XOR em cada byte da mensagem com cada possível valor de chave, logo em seguida testamos se o resultado forma uma string válida. Ao final filtramos as saídas liberadas, com o comado `if "crypto" in text` e o `break` para finalizar a repetição, considerando a palavra "crypto" que necessariamente esta no início da flag decodificada. Por fim com o objetivo de tratar erros que ocorrem ao tentar converter bytes para texto legível utilizamos o `try`, e o bloco `except UnicodeDecodeError:` para possíveis exeções levantadas pelo python.
 
 ```python
-key1 = bytes.fromhex("a6c8b6733c9b22de7bc0253266a3867df55acde8635e19c73313")
-key1_xor_key2 = bytes.fromhex("37dcb292030faa90d07eec17e3b1c6d8daf94c35d4c9191a5e1e")
-key2_xor_key3 = bytes.fromhex("c1545756687e7573db23aa1c3452a098b71a7fbf0fddddde5fc1")
-encrypted = bytes.fromhex("04ee9855208a2cd59091d04767ae47963170d1660df7f56f5faf")
+for key in range(256):
+     decrypted = bytes([b ^ key for b in cipher_bytes])
+     try:
+         text = decrypted.decode('utf-8')
+         if "crypto" in text:
+             print(f"Key: {key} => {text}")
+     except UnicodeDecodeError:
+        continue
 ```
-
-### Passo 3: Decodificação
-
-Com os dados em mãos podemos realizar as funções montadas. A primeira recuperação é a do ***key2*** pela qual através da propriedade associativa e da propriedade da auto-inversão obtemos uma identidade que gera a ***key2***.
-
-key1 &oplus; key2 = key2 &oplus; key1   --->    (key1 &oplus; key2) &oplus; key1 = (key1 &oplus; key1) &oplus; key2    --->    (0) &oplus; key2 = key2
-
-```python
-key2 = xor_bytes(key1, key1_xor_key2)
-```
-
- A segunda recuperação é a do ***key3*** pela qual através da propriedade associativa e da propriedade da auto-inversão obtemos uma identidade que gera a ***key3***.
- 
-key3 &oplus; key2 = key2 &oplus; key3   --->    (key3 &oplus; key2) &oplus; key2 = (key2 &oplus; key2) &oplus; key3    --->    (0) &oplus; key3 = key3
-
-```python
-key3 = xor_bytes(key2, key2_xor_key3)
-```
- A terceira recuperação é a da ***flag*** pela qual através da propriedade associativa e da propriedade da auto-inversão obtemos identidades três vezes que geram a ***flag***.
-
-```python
-flag = xor_bytes(encrypted, key1, key2, key3)
- ```
-
 Saída de dados:
 
 ```python
-print(flag.decode())
+Key: 16 => crypto{0x10_15_my_f4v0ur173_by7e}
 ```
 
-
->crypto{x0r_i5_ass0c1at1v3}
+>crypto{0x10_15_my_f4v0ur173_by7e}
